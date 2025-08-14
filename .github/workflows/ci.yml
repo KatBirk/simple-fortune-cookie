@@ -83,8 +83,8 @@ jobs:
       - name: Get service IP
         run: |
           # Wait for the service to get an external IP
-          kubectl --kubeconfig kubeconfig rollout status deployment/your-deployment --timeout=120s
-          SERVICE_IP=$(kubectl --kubeconfig kubeconfig get svc your-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          kubectl --kubeconfig kubeconfig rollout status deployment/frontend --timeout=120s
+          SERVICE_IP=$(kubectl --kubeconfig kubeconfig get svc frontend -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
           echo "APP_URL=http://${SERVICE_IP}:8080" >> $GITHUB_ENV
           echo "APP_URL=http://${SERVICE_IP}:8080" >> service_url.txt
       - name: Upload service URL
