@@ -21,3 +21,6 @@ spec:
       containers:
       - image: katrineb/fortune-cookie-backend:v1
         name: fortune-cookie-backend
+        env:
+        - name: REDIS_DNS
+          value: "redis"
