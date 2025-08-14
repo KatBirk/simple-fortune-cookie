@@ -5,7 +5,7 @@ services:
     build:
       context: ./backend  
       dockerfile: Dockerfile
-    container_name: backend
+    container_name: fortune-cookie-backend
     ports:
       - "9000:9000"
 
@@ -13,6 +13,6 @@ services:
     build: 
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: frontend
+    container_name: fortune-cookie-frontend
     ports:
       - "8080:8080"
