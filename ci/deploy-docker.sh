@@ -11,4 +11,4 @@ docker pull "$REPO-frontend:latest"
 docker pull "$REPO-backend:latest"
 
 # Deploy with docker-compose
-docker-compose -f docker-compose.yml up -d
+docker compose -f docker-compose.yml up -d
