@@ -8,7 +8,7 @@ REPO="ghcr.io/$docker_username/fortune-cookie"
 echo "Building frontend and backend images with tags: latest and 1.0-$Tag"
 
 # Build all services using docker-compose
-docker-compose -f docker-compose.yml build \
+docker compose -f docker-compose.yml build \
     --build-arg REPO="$REPO" \
     --build-arg TAG="$Tag"
 
