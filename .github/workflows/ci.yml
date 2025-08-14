@@ -82,16 +82,10 @@ jobs:
         run: kubectl --kubeconfig kubeconfig apply -f ./kubernetes
       - name: Get NodePort and Node IP
         run: |
-          # Get the NodePort
           NODE_PORT=$(kubectl --kubeconfig kubeconfig get svc frontend -o jsonpath='{.spec.ports[0].nodePort}')
-          # Get the public IP of a node (assuming your cluster nodes have public IPs)
           NODE_IP=$(kubectl --kubeconfig kubeconfig get nodes -o jsonpath='{.items[0].status.addresses[?(@.type=="ExternalIP")].address}')
-          # If no ExternalIP, try InternalIP (only works if runner is in the same network)
-          if [ -z "$NODE_IP" ]; then
-            NODE_IP=$(kubectl --kubeconfig kubeconfig get nodes -o jsonpath='{.items[0].status.addresses[?(@.type=="InternalIP")].address}')
-          fi
           echo "APP_URL=http://${NODE_IP}:${NODE_PORT}" >> $GITHUB_ENV
-
+          echo "http://${NODE_IP}:${NODE_PORT}" > service_url.txt
       - name: Upload service URL
         uses: actions/upload-artifact@v4
         with:
