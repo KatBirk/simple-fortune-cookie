@@ -90,6 +90,3 @@ jobs:
           path: .
       - name: Run functional test
         run: chmod +x ci/test-app.sh && ci/test-app.sh
-      - name: Clean up (optional)
-        if: always()
-        run: bash ci/cleanup-docker.sh
