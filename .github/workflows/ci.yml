@@ -80,13 +80,18 @@ jobs:
         run: echo "${{ secrets.KUBECONFIG }}" | base64 -d > kubeconfig
       - name: Apply deployment
         run: kubectl --kubeconfig kubeconfig apply -f ./kubernetes
-      - name: Get service IP
+      - name: Get NodePort and Node IP
         run: |
-          # Wait for the service to get an external IP
-          kubectl --kubeconfig kubeconfig rollout status deployment/frontend --timeout=120s
-          SERVICE_IP=$(kubectl --kubeconfig kubeconfig get svc load-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-          echo "APP_URL=http://${SERVICE_IP}:8080" >> $GITHUB_ENV
-          echo "APP_URL=http://${SERVICE_IP}:8080" >> service_url.txt
+          # Get the NodePort
+          NODE_PORT=$(kubectl --kubeconfig kubeconfig get svc frontend -o jsonpath='{.spec.ports[0].nodePort}')
+          # Get the public IP of a node (assuming your cluster nodes have public IPs)
+          NODE_IP=$(kubectl --kubeconfig kubeconfig get nodes -o jsonpath='{.items[0].status.addresses[?(@.type=="ExternalIP")].address}')
+          # If no ExternalIP, try InternalIP (only works if runner is in the same network)
+          if [ -z "$NODE_IP" ]; then
+            NODE_IP=$(kubectl --kubeconfig kubeconfig get nodes -o jsonpath='{.items[0].status.addresses[?(@.type=="InternalIP")].address}')
+          fi
+          echo "APP_URL=http://${NODE_IP}:${NODE_PORT}" >> $GITHUB_ENV
+
       - name: Upload service URL
         uses: actions/upload-artifact@v4
         with:
