@@ -80,7 +80,7 @@ jobs:
           exit-code: 1
           ignore-unfixed: true
           vuln-type: os,library
-          severity: CRITICAL,HIGH'
+          severity: CRITICAL,HIGH
 
       - name: Scan backend image
         uses: aquasecurity/trivy-action@0.28.0
