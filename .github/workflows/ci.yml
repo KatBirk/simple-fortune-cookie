@@ -68,31 +68,29 @@ jobs:
   trivy-security-scan:
     needs: docker-image-push
     runs-on: ubuntu-latest
+    env:
+      REPO: ghcr.io/katbirk/fortune-cookie
+      TAG: ${{ github.sha }}
     steps:
-      - name: Set TAG environment variable
-        run: |
-          echo "TAG=${GIT_COMMIT::8}" >> $GITHUB_ENV
-          echo "REPO=ghcr.io/katbirk/fortune-cookie" >> $GITHUB_ENV
-
       - name: Scan frontend image
         uses: aquasecurity/trivy-action@0.28.0
         with:
-          image-ref: "$REPO-frontend:1.0-$TAG"
-          format: 'table'
-          exit-code: '1'
+          image-ref: ${{ env.REPO }}-frontend:1.0-${{ env.TAG }}
+          format: table
+          exit-code: 1
           ignore-unfixed: true
-          vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'
+          vuln-type: os,library
+          severity: CRITICAL,HIGH'
 
       - name: Scan backend image
         uses: aquasecurity/trivy-action@0.28.0
         with:
-          image-ref: "$REPO-backend:1.0-$TAG"
-          format: 'table'
-          exit-code: '1'
+          image-ref: ${{ env.REPO }}-backend:1.0-${{ env.TAG }}
+          format: table
+          exit-code: 1
           ignore-unfixed: true
-          vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'
+          vuln-type: os,library
+          severity: CRITICAL,HIGH
 
   deploy:
     needs: trivy-security-scan
