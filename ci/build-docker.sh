@@ -3,7 +3,7 @@ set -e
 
 # Determine tag
 [[ -z "${GIT_COMMIT}" ]] && Tag='local' || Tag="${GIT_COMMIT::8}" 
-REPO="ghcr.io/$docker_username/fortune-cookie"
+REPO="ghcr.io/katbirk/fortune-cookie"
 
 echo "Building frontend and backend images with tags: latest and 1.0-$Tag"
 
