@@ -80,6 +80,19 @@ jobs:
         run: echo "${{ secrets.KUBECONFIG }}" | base64 -d > kubeconfig
       - name: Apply deployment
         run: kubectl --kubeconfig kubeconfig apply -f ./kubernetes
+      - name: Get service IP
+        run: |
+          # Wait for the service to get an external IP
+          kubectl --kubeconfig kubeconfig rollout status deployment/your-deployment --timeout=120s
+          SERVICE_IP=$(kubectl --kubeconfig kubeconfig get svc your-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          echo "APP_URL=http://${SERVICE_IP}:8080" >> $GITHUB_ENV
+          echo "APP_URL=http://${SERVICE_IP}:8080" >> service_url.txt
+      - name: Upload service URL
+        uses: actions/upload-artifact@v4
+        with:
+          name: service-url
+          path: service_url.txt
+
   functional-test:
     needs: deploy
     runs-on: ubuntu-latest
@@ -89,6 +102,14 @@ jobs:
         with:
           name: code
           path: .
+      - name: Download service URL
+        uses: actions/download-artifact@v4
+        with:
+          name: service-url
       - name: Run functional test
-        run: chmod +x ci/test-app.sh && ci/test-app.sh
+        run: |
+          APP_URL=$(cat service_url.txt)
+          chmod +x ci/test-app.sh
+          APP_URL=$APP_URL ci/test-app.sh
+
 
