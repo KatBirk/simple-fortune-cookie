@@ -80,3 +80,35 @@ jobs:
         run: echo "${{ secrets.KUBECONFIG }}" | base64 -d > kubeconfig
       - name: Apply deployment
         run: kubectl --kubeconfig kubeconfig apply -f ./kubernetes
+      - name: Get NodePort and Node IP
+        run: |
+          NODE_PORT=$(kubectl --kubeconfig kubeconfig get svc frontend -o jsonpath='{.spec.ports[0].nodePort}')
+          NODE_IP=$(kubectl --kubeconfig kubeconfig get nodes -o jsonpath='{.items[0].status.addresses[?(@.type=="ExternalIP")].address}')
+          echo "APP_URL=http://${NODE_IP}:${NODE_PORT}" >> $GITHUB_ENV
+          echo "http://${NODE_IP}:${NODE_PORT}" > service_url.txt
+      - name: Upload service URL
+        uses: actions/upload-artifact@v4
+        with:
+          name: service-url
+          path: service_url.txt
+
+  functional-test:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download code
+        uses: actions/download-artifact@v4
+        with:
+          name: code
+          path: .
+      - name: Download service URL
+        uses: actions/download-artifact@v4
+        with:
+          name: service-url
+      - name: Run functional test
+        run: |
+          APP_URL=$(cat service_url.txt)
+          chmod +x ci/test-app.sh
+          APP_URL=$APP_URL ci/test-app.sh
+
+
