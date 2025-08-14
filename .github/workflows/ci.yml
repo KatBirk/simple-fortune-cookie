@@ -14,6 +14,8 @@ jobs:
         with:
           go-version: '1.21'
       - name: Build
-        run: go build -v ./frontend
+        working-directory: ./frontend
+        run: go build -v
       - name: Run Tests
-        run: go test -v ./frontend
+        working-directory: ./frontend
+        run: go test -v
