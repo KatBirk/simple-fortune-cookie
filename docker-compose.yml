@@ -1,0 +1,18 @@
+services:
+
+#backend container
+  backend-container:
+    build:
+      context: ./backend  
+      dockerfile: Dockerfile
+    container_name: backend
+    ports:
+      - "9000:9000"
+
+  frontend-container:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "8080:8080"
