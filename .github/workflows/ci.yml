@@ -70,12 +70,11 @@ jobs:
     runs-on: ubuntu-latest
     env:
       REPO: ghcr.io/katbirk/fortune-cookie
-      TAG: ${{ github.sha.substr(0, 8) }}
     steps:
       - name: Scan frontend image
         uses: aquasecurity/trivy-action@0.28.0
         with:
-          image-ref: ${{ env.REPO }}-frontend:1.0-${{ env.TAG }}
+          image-ref: ${{ env.REPO }}-frontend:latest
           format: table
           exit-code: 1
           ignore-unfixed: true
@@ -85,7 +84,7 @@ jobs:
       - name: Scan backend image
         uses: aquasecurity/trivy-action@0.28.0
         with:
-          image-ref: ${{ env.REPO }}-backend:1.0-${{ env.TAG }}
+          image-ref: ${{ env.REPO }}-backend:latest
           format: table
           exit-code: 1
           ignore-unfixed: true
