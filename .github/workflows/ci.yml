@@ -76,9 +76,10 @@ jobs:
         with:
           name: code
           path: .
-      - name: deploy Docker
-        run: bash ci/deploy-docker.sh
-
+      - name: Set kubeconfig
+        run: echo "${{ secrets.KUBECONFIG }}" | base64 -d > kubeconfig
+      - name: Apply deployment
+        run: kubectl --kubeconfig kubeconfig apply -f ./kubernetes
   functional-test:
     needs: deploy
     runs-on: ubuntu-latest
@@ -90,3 +91,4 @@ jobs:
           path: .
       - name: Run functional test
         run: chmod +x ci/test-app.sh && ci/test-app.sh
+

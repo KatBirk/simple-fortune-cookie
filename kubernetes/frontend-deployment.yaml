@@ -19,5 +19,5 @@ spec:
         app: frontend
     spec:
       containers:
-      - image: katrineb/fortune-cookie-frontend:v1
+      - image: ghcr.io/katbirk/fortune-cookie-frontend:latest
         name: fortune-cookie-frontend

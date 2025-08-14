@@ -19,7 +19,7 @@ spec:
         app: backend
     spec:
       containers:
-      - image: katrineb/fortune-cookie-backend:v1
+      - image: ghcr.io/katbirk/fortune-cookie-backend:latest
         name: fortune-cookie-backend
         env:
         - name: REDIS_DNS
